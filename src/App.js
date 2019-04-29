@@ -1,26 +1,107 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { Navbar, Form, Table, FormControl, Button, DropdownButton, Dropdown } from 'react-bootstrap';
 import './App.css';
+const api_host = 'https://watch-function.azurewebsites.net/api';
+const recent_key = 'CisCFacJmQALOVR9gCJtM0AMg1XQ2BnamR8k6TSulqfrv5Sx70HPkA==';
+const iod_key = 'kr04KSYiIIUo4QvJeZqa6TdMnmy/fOm44KAa9eTam8CyEHHnhTS5Hg==';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      isLoaded: false,
+      dates: [],
+      error: null,
+      selectedDate: 'Select Date',
+      stocks: [],
+    } 
+  }
+
+  componentDidMount() {
+    fetch(`${api_host}/recent?symbol=SPY&code=${recent_key}`, { mode: "cors", headers: {"Content-Type": "application/json"}})
+    .then(res => res.json())
+    .then(
+      (result) => {
+        this.setState({
+          dates: result
+        });
+      },
+      (error) => {
+        this.setState({
+          error
+        });
+      }
+    )
+  }
+
+  render() {
+    return (
+      <div className="App">
+
+        <Navbar className="bg-light justify-content-between">
+          <h3>{this.state.selectedDate}</h3>
+          
+            <DropdownButton id="dropdown-basic-button" 
+              variant="success" 
+              title={this.state.selectedDate} 
+              onSelect={
+                (e)=> {
+                  this.setState({ selectedDate: e});
+                  fetch(`${api_host}/iods?date=${e}&code=${iod_key}`, { mode: "cors", headers: {"Content-Type": "application/json"}})
+                    .then(res => res.json())
+                    .then(
+                      (result) => {
+                        this.setState({
+                          stocks: result
+                        });
+                      },
+                      (error) => {
+                        this.setState({
+                          error
+                        });
+                      }
+                    )
+                }
+            }>
+              {
+                this.state.dates.map(
+                  i => <Dropdown.Item key={i} eventKey={i}>{i}</Dropdown.Item>
+                )
+              }
+            </DropdownButton>
+          
+        </Navbar>
+        <div>
+          <Table striped bordered hover size="sm">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>SMA GOOD</th>
+                <th>RSI</th>
+                <th>Price@Rsi70</th>
+                <th>Return 200</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                this.state.stocks.map (
+                  s => <tr>
+                  <td>{s.symbol}</td>
+                  <td>{s.smaGood}</td>
+                  <td>{s.currentRsi}</td>
+                  <td>{s.priceAt70}</td>
+                  <td>{s.return200}</td>
+                </tr>
+                )
+              }
+              
+              
+            </tbody>
+          </Table>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
