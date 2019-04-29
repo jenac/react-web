@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { Navbar, Form, Table, FormControl, Button, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Navbar, Table, DropdownButton, Dropdown } from 'react-bootstrap';
+import good from './good.png';
+import bad from './bad.png';
+import normal from './normal.png';
+import stop from './stop.png';
+import warning from './warning.png';
 import './App.css';
 const api_host = 'https://watch-function.azurewebsites.net/api';
 const recent_key = 'CisCFacJmQALOVR9gCJtM0AMg1XQ2BnamR8k6TSulqfrv5Sx70HPkA==';
@@ -76,6 +81,7 @@ class App extends Component {
             <thead>
               <tr>
                 <th>#</th>
+                <th>Sign</th>
                 <th>SMA GOOD</th>
                 <th>RSI</th>
                 <th>Price@Rsi70</th>
@@ -87,15 +93,17 @@ class App extends Component {
                 this.state.stocks.map (
                   s => <tr>
                   <td>{s.symbol}</td>
-                  <td>{s.smaGood}</td>
+                  <td><img src = {
+                      (s.currentRsi > 69.0) ? warning : 
+                        ((s.currentRsi > 49.0) ? normal : stop)
+                    } alt="sign"></img></td>
+                  <td><img src = {s.smaGood ? good : bad} alt="smaGood"></img></td>
                   <td>{s.currentRsi}</td>
                   <td>{s.priceAt70}</td>
                   <td>{s.return200}</td>
                 </tr>
                 )
               }
-              
-              
             </tbody>
           </Table>
         </div>
