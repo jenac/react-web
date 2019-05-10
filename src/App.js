@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Navbar, Table, DropdownButton, Dropdown } from 'react-bootstrap';
+import { DatePicker } from 'antd';
 import good from './good.png';
 import bad from './bad.png';
 import normal from './normal.png';
 import stop from './stop.png';
 import warning from './warning.png';
 import './App.css';
+import 'antd/dist/antd.css';
+
 const api_host = 'https://watch-function.azurewebsites.net/api';
 const recent_key = 'CisCFacJmQALOVR9gCJtM0AMg1XQ2BnamR8k6TSulqfrv5Sx70HPkA==';
 const iod_key = 'kr04KSYiIIUo4QvJeZqa6TdMnmy/fOm44KAa9eTam8CyEHHnhTS5Hg==';
@@ -42,7 +45,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-
+        <DatePicker />
         <Navbar className="bg-light justify-content-between">
           <h3>{this.state.selectedDate}</h3>
           
